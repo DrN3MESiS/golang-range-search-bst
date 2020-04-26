@@ -60,6 +60,7 @@ type Node struct {
 	color   Color
 	Left    *Node `json:"leftNode"`
 	Right   *Node `json:"rightNode"`
+	Leaf    bool  `json:"isLeaf"`
 	parent  *Node
 }
 
@@ -701,29 +702,22 @@ func mustBeValidKey(key interface{}) error {
 	}
 }
 
-func getSplitNode(n *Node, x1, x2 int) *Node {
+func getSplitNode(n *Node, x1, x2 int, debug bool) *Node {
 
-	if n.Right != nil && n.Left != nil {
-		if n.Left.Key.(int) >= x1 && n.Right.Key.(int) <= x2 {
-			return n
+	if n.Key.(int) >= x1 && n.Key.(int) <= x2 {
+		if debug {
+			log.Printf("[SUCCESS] - Found Split Node: %+v", n.String())
 		}
-	}
-
-	if n.Right != nil {
-		if n.Right.Key.(int) <= x2 {
-			theNode := getSplitNode(n.Right, x1, x2)
-			return theNode
-		}
-
+		return n
 	}
 
 	if n.Left != nil {
-		if n.Left.Key.(int) >= x1 {
-			theNode := getSplitNode(n.Left, x1, x2)
-			return theNode
-		}
+		return getSplitNode(n.Left, x1, x2, debug)
 	}
 
+	if n.Right != nil {
+		return getSplitNode(n.Right, x1, x2, debug)
+	}
 	return nil
 }
 
@@ -734,29 +728,104 @@ func (n *Node) isLeaf() bool {
 	return false
 }
 
-func (t *Tree) getValuesInRange(x1, x2 int) {
-	Vs := getSplitNode(t.Root, x1, x2)
-	if Vs == nil {
-		return
+func (t *Tree) getValuesInRange(x1, x2 int, debug bool) []int {
+	if debug {
+		log.Printf("[Query] Values between %v and %v", x1, x2)
 	}
-	log.Printf("%+v", Vs.String())
+	rangeNodes := []Node{}
+	Vs := getSplitNode(t.Root, x1, x2, debug)
+	if Vs == nil {
+		log.Printf("\n\t[ERR] Couldn't find Split Node\n")
+		return []int{}
+	}
+
+	curNode := Vs
+	if curNode.isLeaf() {
+		if curNode.Key.(int) >= x1 && curNode.Key.(int) <= x2 {
+			rangeNodes = append(rangeNodes, *curNode)
+		}
+	} else {
+		curNode = curNode.Left
+	}
+
+	/*Going left*/
+
+	for true {
+		if !curNode.isLeaf() {
+
+			if x1 <= curNode.Key.(int) {
+				rangeNodes = append(rangeNodes, *curNode.Right)
+				curNode = curNode.Left
+			} else {
+				curNode = curNode.Right
+			}
+
+		} else {
+			break
+		}
+	}
+
+	if curNode.Key.(int) >= x1 && curNode.Key.(int) <= x2 {
+		rangeNodes = append(rangeNodes, *curNode)
+	}
+
+	/*Going right*/
+
+	curNode = Vs.Right
+	for true {
+		if !curNode.isLeaf() {
+			if curNode.Key.(int) <= x2 {
+				rangeNodes = append(rangeNodes, *curNode.Left)
+				curNode = curNode.Right
+			} else {
+				curNode = curNode.Left
+			}
+		} else {
+			break
+		}
+	}
+
+	if curNode.Key.(int) >= x1 && curNode.Key.(int) <= x2 {
+		rangeNodes = append(rangeNodes, *curNode)
+	}
+	keys := []int{}
+	for _, node := range rangeNodes {
+		keys = append(keys, node.Key.(int))
+	}
+
+	log.Printf("Values in Range [%v, %v] -> %+v", x1, x2, keys)
+	return keys
 }
 
 func printToJSON(t *Tree) {
-
+	/* Print JSON to file */
+	file, _ := json.MarshalIndent(t, "", " ")
+	_ = ioutil.WriteFile("tree.json", file, 0644)
 }
 
 func main() {
+	leaf3 := &Node{Key: 3, Leaf: true}
+	leaf10 := &Node{Key: 10, Leaf: true}
+	leaf19 := &Node{Key: 19, Leaf: true}
+	leaf23 := &Node{Key: 23, Leaf: true}
+	leaf30 := &Node{Key: 30, Leaf: true}
+	leaf37 := &Node{Key: 37, Leaf: true}
+	leaf49 := &Node{Key: 49, Leaf: true}
+	leaf59 := &Node{Key: 59, Leaf: true}
+	leaf62 := &Node{Key: 62, Leaf: true}
+	leaf70 := &Node{Key: 70, Leaf: true}
+	leaf80 := &Node{Key: 80, Leaf: true}
+	leaf100 := &Node{Key: 100, Leaf: true}
 
-	node19 := Node{Key: 19}
-	node3 := Node{Key: 3}
-	node30 := Node{Key: 30}
-	node59 := Node{Key: 59}
-	node70 := Node{Key: 70}
-	node100 := Node{Key: 100}
+	node3 := Node{Key: 3, Left: leaf3, Right: leaf10}
+	node19 := Node{Key: 19, Left: leaf19, Right: leaf23}
+	node30 := Node{Key: 30, Left: leaf30, Right: leaf37}
+	node59 := Node{Key: 59, Left: leaf59, Right: leaf62}
+	node70 := Node{Key: 70, Left: leaf70, Right: leaf80}
+	node100 := Node{Key: 100, Left: leaf100}
 
 	node10 := Node{Key: 10, Left: &node3, Right: &node19}
-	node37 := Node{Key: 37, Left: &node30}
+	node37 := Node{Key: 37, Left: &node30, Right: leaf49}
 	node62 := Node{Key: 62, Left: &node59, Right: &node70}
 	node89 := Node{Key: 89, Right: &node100}
 
@@ -765,8 +834,9 @@ func main() {
 
 	tree := Tree{Root: &Node{Key: 49, Left: &node23, Right: &node80}, cmp: IntComparator}
 
-	file, _ := json.MarshalIndent(&tree, "", " ")
+	printToJSON(&tree)
 
-	_ = ioutil.WriteFile("test.json", file, 0644)
-	tree.getValuesInRange(10, 30)
+	/* Range TESTS */
+	_ = tree.getValuesInRange(19, 77, false)
+
 }

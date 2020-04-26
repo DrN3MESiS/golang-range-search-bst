@@ -1,0 +1,128 @@
+{
+ "root": {
+  "key": 49,
+  "leftNode": {
+   "key": 23,
+   "leftNode": {
+    "key": 10,
+    "leftNode": {
+     "key": 3,
+     "leftNode": {
+      "key": 3,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "rightNode": {
+      "key": 10,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "isLeaf": false
+    },
+    "rightNode": {
+     "key": 19,
+     "leftNode": {
+      "key": 19,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "rightNode": {
+      "key": 23,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "isLeaf": false
+    },
+    "isLeaf": false
+   },
+   "rightNode": {
+    "key": 37,
+    "leftNode": {
+     "key": 30,
+     "leftNode": {
+      "key": 30,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "rightNode": {
+      "key": 37,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "isLeaf": false
+    },
+    "rightNode": {
+     "key": 49,
+     "leftNode": null,
+     "rightNode": null,
+     "isLeaf": true
+    },
+    "isLeaf": false
+   },
+   "isLeaf": false
+  },
+  "rightNode": {
+   "key": 80,
+   "leftNode": {
+    "key": 62,
+    "leftNode": {
+     "key": 59,
+     "leftNode": {
+      "key": 59,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "rightNode": {
+      "key": 62,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "isLeaf": false
+    },
+    "rightNode": {
+     "key": 70,
+     "leftNode": {
+      "key": 70,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "rightNode": {
+      "key": 80,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "isLeaf": false
+    },
+    "isLeaf": false
+   },
+   "rightNode": {
+    "key": 89,
+    "leftNode": null,
+    "rightNode": {
+     "key": 100,
+     "leftNode": {
+      "key": 100,
+      "leftNode": null,
+      "rightNode": null,
+      "isLeaf": true
+     },
+     "rightNode": null,
+     "isLeaf": false
+    },
+    "isLeaf": false
+   },
+   "isLeaf": false
+  },
+  "isLeaf": false
+ }
+}
