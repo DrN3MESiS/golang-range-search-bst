@@ -118,8 +118,8 @@ func StringComparator(o1, o2 interface{}) int {
 
 // Tree encapsulates the data structure.
 type Tree struct {
-	Root *Node      `json:"root"`               // tip of the tree
-	cmp  Comparator `json:"comparatorFunction"` // required function to order keys
+	Root *Node      `json:"root"` // tip of the tree
+	cmp  Comparator // required function to order keys
 }
 
 // `lock` protects `logger`
@@ -797,7 +797,7 @@ func (t *Tree) getValuesInRange(x1, x2 int, debug bool) []int {
 	return keys
 }
 
-func printToJSON(t *Tree) {
+func (t *Tree) printToJSON() {
 	/* Print JSON to file */
 	file, _ := json.MarshalIndent(t, "", " ")
 	_ = ioutil.WriteFile("tree.json", file, 0644)
@@ -834,9 +834,11 @@ func main() {
 
 	tree := Tree{Root: &Node{Key: 49, Left: &node23, Right: &node80}, cmp: IntComparator}
 
-	printToJSON(&tree)
-
 	/* Range TESTS */
 	_ = tree.getValuesInRange(19, 77, false)
+	_ = tree.getValuesInRange(15, 30, false)
+
+	/* JSON Tree Export*/
+	tree.printToJSON()
 
 }
